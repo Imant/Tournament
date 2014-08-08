@@ -1,0 +1,37 @@
+﻿@model Custom.RatingTable.Models.RatingTablePart
+
+<table>
+    <tr>
+        <th>Место</th>
+        <th>+-</th>
+        <th>Игрок</th>
+        <th>Рейтинг</th>
+        <th>+-</th>
+        <th></th>
+    </tr>
+    @{
+        if (Model != null)
+        {
+            @Html.EditorFor(x => x.Name)
+            
+            for (var ind = 0; ind < Model.RatingRecords.Count(); ind++)
+            {
+                <tr>
+                    @*@Html.Partial("EditorTemplates/Parts/RatingRecords", Model.RatingRecords)*@
+                    <td>@Html.EditorFor(x => x.RatingRecords[ind].Place)</td>
+                    <td>@Html.EditorFor(x => x.RatingRecords[ind].PlaceIncrement)</td>
+                    <td>@Html.EditorFor(x => x.RatingRecords[ind].Player)</td>
+                    <td>@Html.EditorFor(x => x.RatingRecords[ind].Rating)</td>
+                    <td>@Html.EditorFor(x => x.RatingRecords[ind].RatingIncrement)</td>
+                    <td>@Html.ActionLink("Delete rating record", "DeleteRatingRecord", "RatingTableAdmin", new { id = Model.ContentItem.Id, ratingRecordId = Model.RatingRecords[ind].Id, area = "Custom.RatingTable" }, new { })</td>
+                </tr>
+            }
+        }
+    }
+</table>
+<div>
+    @Html.ActionLink("Add rating record", "AddRatingRecord", "RatingTableAdmin", new { id = Model.ContentItem.Id, area = "Custom.RatingTable" }, new { })
+</div>
+<div>
+    @Html.ActionLink("Synchronize table with tabletennis.by", "SynchronizeWithRemoteSite", "RatingTableAdmin", new {id = Model.ContentItem.Id, area="Custom.RatingTable"}, new{})
+</div>

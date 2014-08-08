@@ -1,0 +1,12 @@
+﻿@using Orchard.ContentManagement
+
+<h2>@T("List of Rating Tables")</h2>
+<ol>
+    @foreach (var item in (IEnumerable<ContentItem>)Model.RatingTables)
+    {
+        <li>
+            @(item.As<Orchard.Core.Title.Models.TitlePart>().Title) - 
+            @Html.ItemEditLink(T("Edit").Text, item), @Html.ItemDisplayLink(T("Display").Text, item)
+        </li>
+    }
+</ol>

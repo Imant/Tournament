@@ -1,0 +1,30 @@
+﻿@{
+    var part = (Custom.RatingTable.Models.RatingTablePart)Model.ContentPart;
+}
+
+@T("You're currently looking at me in \"{0}\" display type", Model.DisplayType)
+
+<table>
+    <tr>
+        <th>Место</th>
+        <th>+-</th>
+        <th>Игрок</th>
+        <th>Рейтинг</th>
+        <th>+-</th>
+    </tr>
+    @{
+        if (part != null) 
+        {
+            foreach (var record in part.RatingRecords) 
+            {
+                <tr>
+                    <td>@record.Place</td>
+                    <td>@record.PlaceIncrement</td>
+                    <td>@record.Player</td>
+                    <td>@record.Rating</td>
+                    <td>@record.RatingIncrement</td>
+                </tr>
+            }
+        }
+    }
+</table>

@@ -1,0 +1,14 @@
+﻿@using System.Globalization
+@model Custom.Tournament.ViewModels.AddLeagueInTourEditorViewModel
+
+<h2>Add League In Tour</h2>
+
+
+@using (Html.BeginFormAntiForgeryPost())
+{
+    @Html.HiddenFor(x => x.TourId)
+
+    @Html.DropDownListFor(x => x.SelectedLeagueId, new SelectList(Model.Leagues, "Id", "Name"))
+
+    <input type="submit" value="Save"/>
+}

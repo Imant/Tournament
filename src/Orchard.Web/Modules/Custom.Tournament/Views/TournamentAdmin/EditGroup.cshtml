@@ -1,0 +1,276 @@
+﻿@model Custom.Tournament.ViewModels.GroupViewModel
+
+@{
+    Script.Require("jQuery").AtHead();
+    Script.Require("jQueryUI").AtHead();
+}
+
+<style>
+    #groupTable 
+    {
+        table-layout: fixed;
+    }
+
+    #groupTable td 
+    {
+        width: 125px;
+        height: 30px;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    #groupTable table, #groupTable th, #groupTable td
+    {
+        border: 1px solid black;
+    }
+
+    td.delimiter 
+    {
+        background: gray;    
+    }
+
+    td.score 
+    {
+        text-align: center;    
+    }
+
+    td.delete-column
+    {
+        width: 60px !important;
+    }
+
+    td.player-column
+    {
+        width: 120px !important;
+        text-align: left !important;
+        padding-left: 10px;
+    }
+
+    span.forfeited 
+    {
+        color: red;
+        margin-left: -3px;  
+    }
+</style>
+
+<h2>Add Group</h2>
+
+<div>
+    @Html.AntiForgeryTokenOrchard()
+
+    @Html.HiddenFor(x => x.GroupId)
+    
+    @if (Model.OldPlayers != null && Model.OldPlayers.Count > 0)
+    {
+        <div id="oldPlayers">
+            @foreach (var player in Model.OldPlayers)
+            {
+                @Html.Hidden("oldPlayer", player.Id)
+            }
+        </div>
+    }
+    
+    @if (Model.OldResults != null && Model.OldResults.Count > 0)
+    {
+        <div id="oldResults">
+            @foreach (var result in Model.OldResults)
+            {
+                @Html.Hidden("oldResult", result)
+            }
+        </div>
+    }
+
+    <h3>Group Name</h3>
+    @Html.EditorFor(x => x.GroupName)
+    
+    <h3>Group Table</h3>
+    
+    <table id="groupTable">
+        <tbody></tbody>
+    </table>
+    
+    <select id="playerSelect">
+        @if (Model.OldPlayers != null && Model.OldPlayers.Count > 0)
+        {
+            foreach (var player in Model.OldPlayers)
+            {
+                <option value="@player.Id">@player.Name</option>
+            }
+        }
+    </select>
+
+    <input id="btnAddPlayer" type="button" value="Add Player"/>
+
+</div>
+
+<div>
+    <input id="btnSave" type="button" value="Save"/>
+</div>
+
+<script>
+    var maxScore = 3;
+
+    $(document).ready(function() {
+        var ids = [];
+
+        if ($.cookie("ParticipatedPlayerIds")) {
+            ids = $.cookie("ParticipatedPlayerIds").split(",");
+
+            var parameters = { playerIds: ids, __RequestVerificationToken: $("input[name=__RequestVerificationToken]").val() };
+            $.ajax({
+                type: 'Post',
+                cache: false,
+                traditional: true,
+                data: parameters,
+                url: "@Url.Action("GetPlayersByIds", "TournamentAdmin")",
+                success: function(data) {
+                    for (var i = 0; i < data.length; i++) {
+                        var opt = $("#playerSelect option[value='" + data[i].Id + "']");
+                        if (opt.length == 0) {
+                            opt = $("<option value='" + data[i].Id + "'>" + data[i].Name + "</option>");
+                            $("#playerSelect").append(opt);
+                        }
+                    }
+                },
+                error: function(exc) {
+                    alert('Error message.');
+                }
+            });
+        }
+
+        $("#btnAddPlayer").click(function() {
+            addPlayer($("#playerSelect option:selected").val());
+        });
+
+        $("#btnSave").click(function() {
+            saveGroup();
+        });
+
+        if ($("#GroupId").val() != 0) {
+            fillTable();
+        }
+    });
+    
+    function addPlayer(id) {
+        if (id == undefined) {
+            return;
+        }
+
+        var appendStr = "<td class='delete-column'><input type='button' value='delete'/></td><td class='player-column'>" + $("#playerSelect option[value='" + id + "']").text() + "</td><td></td>";
+        var trs = $("#groupTable tr");
+
+        for (var i = 0; i < trs.length; i++) {
+            appendStr += "<td></td>";
+        }
+
+        appendStr = "<tr>" + appendStr + "</tr>";
+
+        $("#groupTable tr input[type='hidden']").each(function () {
+            var td = $("<td class='score'></td>");
+            addScoreEditor(td);
+            $(this).before(td);
+
+        });
+        
+        $("#groupTable tbody:last").append(appendStr);
+
+        $("#groupTable tr:last").append("<input type='hidden' value='" + id + "'/>");
+
+        $("#groupTable tr td:last").attr("class", "delimiter");
+
+        bindDeleteBtn($("#groupTable tr td input[type='button'][value='delete']:last"));
+
+        $("#playerSelect option[value='" + id + "']").attr("disabled", "disabled");
+
+        $("#playerSelect option").removeAttr("selected");
+    }
+    
+    function addScoreEditor(td) {
+        var optionsStr = "";
+
+        for (var i = 0; i <= maxScore; i++) {
+            optionsStr += "<option value='" + i + "'>" + i + "</option>";
+        }
+
+        var selectStr = "<select>" + optionsStr + "</select>";
+
+        td.append(selectStr);
+
+        td.append("&nbsp;:&nbsp;");
+
+        td.append(selectStr);
+
+        td.append("&nbsp;");
+
+        td.append("<input type='checkbox' /> <span class='forfeited'=>T</span>");
+    }
+    
+    function bindDeleteBtn(btnDelete) {
+        btnDelete.click(function () {
+            deletePlayer($(this));
+        });
+    }
+
+    function deletePlayer(btnDelete) {
+        var tr = btnDelete.parent().parent();
+        var trInd = tr.index();
+        var playerId = tr.find("input[type='hidden']").val();
+
+        tr.remove();
+        $('#groupTable tr').find('td:eq(' + (trInd + 2) + ')').remove();
+
+        $("#playerSelect option[value='" + playerId + "']").removeAttr("disabled");
+
+        if ($("#playerSelect").val() == null) {
+            $("#playerSelect").val(playerId);
+        }
+    }
+    
+    function fillTable() {
+        $("input[type='hidden'][name='oldPlayer']").each(function() {
+            addPlayer($(this).val());
+        });
+        
+        $("#groupTable td.score").each(function (index) {
+            var oldResult = $("input[type='hidden'][name='oldResult']").eq(index).val();
+            var resArr = oldResult.split(":");
+
+            $(this).find("select:first").val(resArr[0]);
+            $(this).find("select:last").val(resArr[1]);
+            
+            if (resArr[2] == 1) {
+                $(this).find("input[type='checkbox']").attr("checked", "checked");
+            }
+
+        });
+    }
+    
+    function saveGroup() {
+        var playerIds = [];
+        $("#groupTable tr input[type='hidden']").each(function () {
+            playerIds.splice(playerIds.length, 0, $(this).val());
+        });
+
+        var results = [];
+        $("#groupTable td.score").each(function () {
+            var score1 = $(this).find("select:first").val();
+            var score2 = $(this).find("select:last").val();
+            var forfeited = $(this).find("input[type='checkbox']").is(":checked") ? 1 : 0;
+
+            results.splice(results.length, 0, score1 + ":" + score2 + ":" + forfeited);
+        });
+
+        var parameters = { leagueInTourId: @(Model.LeagueInTourId), groupId: @(Model.GroupId), groupName: $("#GroupName").val(), playerIds: playerIds, results: results, __RequestVerificationToken: $("input[name=__RequestVerificationToken]").val() };
+        $.ajax({
+            type: 'Post',
+            cache: false,
+            traditional: true,
+            data: parameters,
+            url: "@Url.Action("SaveGroup", "TournamentAdmin")",
+                success: function () {
+                    window.location.href = '@Html.Raw(Url.Action("EditLeagueInTour", "TournamentAdmin", new {leagueInTourId = Model.LeagueInTourId}))';
+                }
+            });
+    }
+
+</script>

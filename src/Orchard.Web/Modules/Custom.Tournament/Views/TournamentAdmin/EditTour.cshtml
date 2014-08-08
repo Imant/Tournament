@@ -1,0 +1,86 @@
+﻿@model Custom.Tournament.Models.TourRecord
+
+@{
+    Script.Require("jQuery").AtHead();
+    Script.Require("jQueryUI").AtHead();
+    Style.Require("jQueryUI_DatePicker").AtHead();
+    if (Model.Id == 0)
+    {
+        Model.Date = DateTime.Now;
+    }
+}
+
+<style>
+    #leagueInToursEditorContainer th
+    {
+        width: 150px;        
+    }
+</style>
+
+<h2>Tour Editor</h2>
+
+<div id="dateEditorContainer">
+    @using (Html.BeginFormAntiForgeryPost())
+    {
+        @Html.HiddenFor(x => x.Id)
+    
+        <div>Specify date of tour</div>
+
+        @Html.EditorFor(x => x.Date)
+
+        <input type="submit" value="Save"/>
+    }
+</div>
+
+<br />
+
+@{
+    if (Model.Id != 0)
+    {
+        <div id="leagueInToursEditorContainer">
+            @using (Html.BeginFormAntiForgeryPost("SaveLeagueInTours"))
+            {
+                <table>
+                    <tr>
+                        <th>League Name</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    @{
+                        if (Model.LeagueInTourRecords != null)
+                        {
+                            foreach (var item in Model.LeagueInTourRecords.OrderBy(x => x.LeagueRecord.Id))
+                            {
+                                <tr>
+                                    <td>@item.LeagueRecord.Name</td>
+                                    <td>@Html.ActionLink("Edit League In Tour", "EditLeagueInTour", "TournamentAdmin", new {area = "Custom.Tournament", leagueInTourId = item.Id}, null)</td>
+                                    <td>@Html.ActionLink("Delete League In Tour", "DeleteLeagueInTour", "TournamentAdmin", new {area = "Custom.Tournament", leagueInTourId = item.Id}, null)</td>
+                                </tr>
+                            }
+                        }
+                    }
+                </table>
+
+                @Html.ActionLink("Add League In Tour", "AddLeagueInTour", "TournamentAdmin", new {area = "Custom.Tournament", tourId = Model.Id}, null)
+
+        @*<input type="submit" value="Save"/>*@
+            }
+        </div>
+    }
+}
+
+<script>
+    $(document).ready(
+        function() {
+            $("#Date").datepicker(
+                {
+                     dateFormat: 'yy-mm-dd'
+                }
+            );
+
+            $("#Date").datepicker("setDate", "@Model.Date.ToString("yyyy-MM-dd")");
+        }
+    );
+</script>
+
+

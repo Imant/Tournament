@@ -1,0 +1,115 @@
+﻿@model Custom.Tournament.ViewModels.ParticipatedPlayersEditorViewModel
+@{
+    Script.Require("jQuery").AtHead();
+    Script.Require("jQueryUI").AtHead();
+}
+
+<style>
+    #ParticipatedPlayerIds {
+        height: 300px;
+    }
+
+    #allPlayers label {
+        width: 300px;
+        display: inline;
+    }
+
+        #allPlayers label.archived {
+            color: red;
+        }
+</style>
+
+<div>
+    
+    @Html.AntiForgeryTokenOrchard()
+
+    @Html.HiddenFor(x => x.LeagueInTourId)
+
+    @*@Html.ListBoxFor(x => x.ParticipatedPlayerIds, new SelectList(Model.Players, "Id", "Name"))*@
+
+    <table id="allPlayers">
+        <tr>
+            <th>Place</th>
+            <th>Player</th>
+            <th>Rating</th>
+        </tr>
+        @{
+            var place = 0;
+            var prevRating = -1;
+            
+            for (var i = 0; i< Model.Ratings.Count; i++)
+            {
+                var isInArchive = Model.Ratings[i].IsInArchive;
+                if (!isInArchive)
+                {
+                    place++;
+                }
+
+                <tr>
+                    <td>
+                        @if (!isInArchive)
+                        {
+                            @place
+                        }
+                        else
+                        {
+                            @(place + 1)
+                        }
+                        
+                    </td>
+                    <td>
+                        <input id="Ratings_@(i)__PlayerRecord.Id" name="Ratings[@(i)].PlayerRecord.Id" type="checkbox" value="@(Model.Ratings[i].PlayerRecord.Id)"/>
+                        @if (!isInArchive)
+                        {
+                            <label for="Ratings_@(i)__PlayerRecord.Id">@Model.Ratings[i].PlayerRecord.Name</label>
+                        }
+                        else
+                        {
+                            <label for="Ratings_@(i)__PlayerRecord.Id" class="archived">@Model.Ratings[i].PlayerRecord.Name</label>
+                        }
+                    </td>
+                    <td>
+                        @Model.Ratings[i].Rating
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+
+    <input id="btnSave" type="button" value="Save" />
+
+</div>
+
+<script>
+    var ids = [];
+    $(document).ready(function () {
+        if ($.cookie("ParticipatedPlayerIds")) {
+            ids = $.cookie("ParticipatedPlayerIds").split(",");
+        }
+
+        for (var i = 0; i < ids.length; i++) {
+            $("input[type='checkbox'][value='" + ids[i] + "']").attr("checked", "checked");
+        }
+
+        $("#btnSave").click(function () {
+            $.cookie("ParticipatedPlayerIds", ids.join(","), { path: '/' });
+            window.location.href = '@Html.Raw(Url.Action("EditLeagueInTour", "TournamentAdmin", new {leagueInTourId = Model.LeagueInTourId, setCookie = false}))';
+        });
+
+        $("input[type='checkbox']").click(function () {
+            var chBox = $(this);
+            if (chBox.is(':checked')) {
+                if (ids.indexOf(chBox.val()) == -1) {
+                    ids.splice(ids.length, 0, chBox.val());
+                }
+            }
+            else {
+                var ind = ids.indexOf(chBox.val());
+                if (ind != -1) {
+                    ids.splice(ind, 1);
+                }
+            }
+        });
+    });
+
+</script>

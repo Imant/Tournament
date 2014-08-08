@@ -1,0 +1,48 @@
+﻿@using PagedList.Mvc
+@model PagedList.IPagedList<Custom.Tournament.Models.TourRecord>
+   
+@{
+    Style.Require("PagedList").AtHead();
+}
+        
+<style>
+    #tours th
+    {
+        width: 100px;        
+    }
+</style>
+
+@Html.ActionLink("Create Tour", "EditTour", "TournamentAdmin", new {area="Custom.Tournament"}, null)
+
+<table id="tours">
+    <tr>
+        <th>Tour Number</th>
+        <th>Date</th>
+        <th></th>
+        <th></th>
+    </tr>
+    @{
+        var index = 0;
+        foreach (var tour in Model)
+        {
+            <tr>
+                <td>@(Model.FirstItemOnPage + index++)</td>
+                <td>@tour.Date.ToShortDateString()</td>
+                <td>
+                    @Html.ActionLink("Edit Tour", "EditTour", "TournamentAdmin", new {area = "Custom.Tournament", tourId = tour.Id}, null)
+                </td>
+                <td>
+                    @Html.ActionLink("Delete Tour", "DeleteTour", "TournamentAdmin", new {area = "Custom.Tournament", tourId = tour.Id}, null)
+                </td>
+            </tr>
+        }
+    }
+</table>
+
+<br />
+
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("EditTours", new {page}))
+
+

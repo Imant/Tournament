@@ -1,0 +1,35 @@
+﻿@model Custom.Tournament.Models.TourRecord
+
+@{
+    Script.Require("jQuery").AtHead();
+    Script.Require("jQueryUI").AtHead();
+    Style.Require("jQueryUI_DatePicker").AtHead();
+    Model.Date = DateTime.Now;
+}
+
+@*using (Html.BeginForm("CreateTour", "TournamentAdmin"))*@
+@using (Html.BeginFormAntiForgeryPost())
+{
+
+    <div>Specify date of tour</div>
+
+    @Html.EditorFor(x => x.Date)
+
+    <input type="submit" value="Save"/>
+}
+
+<script>
+    $(document).ready(
+        function() {
+            $("#Date").datepicker(
+                {
+                     dateFormat: 'yy-mm-dd'
+                }
+            );
+
+            $("#Date").datepicker("setDate", "@Model.Date.ToString("yyyy-MM-dd")");
+        }
+    );
+</script>
+
+

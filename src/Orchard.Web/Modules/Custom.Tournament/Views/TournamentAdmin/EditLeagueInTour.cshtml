@@ -1,0 +1,87 @@
+﻿@model Custom.Tournament.ViewModels.LeagueInTourEditorViewModel
+@{
+    Script.Require("jQuery").AtHead();
+    Script.Require("jQueryUI").AtHead();
+}
+
+<style>
+    #participatedPlayers th, #groups th
+    {
+        width: 150px;        
+    }
+</style>
+
+<h2>League In Tour Editor</h2>
+
+@Html.AntiForgeryTokenOrchard()
+
+@Html.ActionLink("Add Participated Players", "AddParticipatedPlayers", "TournamentAdmin", new {area = "Custom.Tournament", leagueInTourId = Model.LeagueInTourId}, null)
+
+@{
+
+    <h3>Participated Players</h3>
+
+    <table id="participatedPlayers">
+        <tr>
+            <th>Number</th>
+            <th>Name</th>
+        </tr>
+    </table>
+}
+
+
+@Html.ActionLink("Add Group", "EditGroup", "TournamentAdmin", new {area = "Custom.Tournament", leagueInTourId = Model.LeagueInTourId}, null)
+
+@{
+    if (Model.Groups != null && Model.Groups.Count > 0)
+    {
+        <h3>Groups</h3>
+
+        <table id="groups">
+            <tr>
+                <th>Number</th>
+                <th>Name</th>
+                <th></th>
+                <th></th>
+            </tr>
+    
+            @foreach (var group in Model.Groups)
+            {
+                <tr>
+                    <td>@(Model.Groups.IndexOf(group) + 1)</td>
+                    <td>@group.Name</td>
+                    <td>@Html.ActionLink("Edit Group", "EditGroup", "TournamentAdmin", new {area = "Custom.Tournament", leagueInTourId = Model.LeagueInTourId, groupId = group.Id}, null)</td>
+                    <td>@Html.ActionLink("Delete Group With Games", "DeleteGroup", "TournamentAdmin", new {area = "Custom.Tournament", leagueInTourId = Model.LeagueInTourId, groupId = group.Id}, null)</td>
+                </tr>
+            }
+        </table>
+    }
+}
+
+<script>
+    $(function() {
+        var ids = [];
+
+        if ($.cookie("ParticipatedPlayerIds")) {
+            ids = $.cookie("ParticipatedPlayerIds").split(",");
+
+            var parameters = { playerIds: ids, __RequestVerificationToken: $("input[name=__RequestVerificationToken]").val() };
+            $.ajax({
+                type: 'Post',
+                cache: false,
+                traditional: true,
+                data: parameters,
+                url: "@Url.Action("GetPlayersByIds", "TournamentAdmin")",
+                success: function (data) {
+                    for (var i = 0; i < data.length; i++) {
+                        var tr = $("<tr><input type='hidden' value='" + data[i].Id + "'/><td>" + (i + 1) + "</td><td>" + data[i].Name + "</td></tr>");
+                        $("#participatedPlayers").append(tr);
+                    }
+                },
+                error: function (exc) {
+                    alert('Error message.');
+                }
+            });
+        }
+    });
+</script>

@@ -1,0 +1,12 @@
+State: Running
+Themes: 
+Name: Default
+DataProvider: SqlServer
+DataConnectionString: data source=.\MSSQLSERVER2012;Database=Orchard;Trusted_Connection=true;MultipleActiveResultSets=True
+DataTablePrefix: null
+RequestUrlHost: null
+RequestUrlPrefix: null
+EncryptionAlgorithm: AES
+EncryptionKey: 6A6E0E12C97B2A6724BC8A424377B6A9DFDC7CE39A0174806ACDF72CD9F91173
+HashAlgorithm: HMACSHA256
+HashKey: 60EC96B39F44F34569D1E0493C91615E2BC8406F218C95C0D3EC14057CC074E17215C77143F5C34934093A7695F8CB8C24AD15D7B90604CF9B81DD5D2AACB847

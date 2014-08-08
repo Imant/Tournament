@@ -1,0 +1,32 @@
+﻿<h2>Tournament Dashboard</h2>
+
+<div>
+    @Html.ActionLink("Synchronize table with tabletennis.by", "SynchronizeWithRemoteSite", "TournamentAdmin", new {area="Custom.Tournament"}, new{})
+    <br/>
+    @Html.ActionLink("Clear cache", "ClearCache", "TournamentAdmin", new {area="Custom.Tournament"}, new{})
+</div>
+
+<table>
+    <tr>
+        <td>
+            <ul>
+                @foreach (var player in ViewBag.Players)
+                {
+                    <li>
+                        @player.Name
+                    </li>
+                }
+            </ul>
+        </td>
+        <td>
+            <ul>
+                @foreach (var tour in ViewBag.Tours)
+                {
+                    <li>
+                        @tour.Date
+                    </li>
+                }
+            </ul>
+        </td>
+    </tr>
+</table>

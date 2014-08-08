@@ -1,0 +1,6 @@
+﻿@{
+    var part = (Custom.RatingTable.Models.RatingTablePart)Model.ContentPart;
+}
+
+@*Remember the DisplayType dynamic property we added to the shape in the driver? It's here.*@
+@T("You're currently looking at me in \"{0}\" display type", Model.DisplayType)

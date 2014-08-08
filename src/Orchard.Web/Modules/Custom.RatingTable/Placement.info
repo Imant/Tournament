@@ -1,0 +1,10 @@
+﻿<Placement>
+  <Place Parts_RatingTable_Edit="Content:5"
+         Parts_RatingTable="Content:5"/>
+  <Match DisplayType="Summary">
+    <Place Parts_RatingTable_Summary="Content:5" />
+  </Match>
+  <Match DisplayType="SummaryAdmin">
+    <Place Parts_RatingTable_SummaryAdmin="Content:5" />
+  </Match>
+</Placement>

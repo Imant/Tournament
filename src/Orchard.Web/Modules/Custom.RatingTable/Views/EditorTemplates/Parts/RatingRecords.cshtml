@@ -1,0 +1,12 @@
+﻿@model IList<Custom.RatingTable.Models.RatingRecord>
+
+@for (var ind = 0; ind < Model.Count(); ind++)
+{
+    <tr>
+        <td>@Html.EditorFor(x => x[ind].Place)</td>
+        <td>@Html.EditorFor(x => x[ind].PlaceIncrement)</td>
+        <td>@Html.EditorFor(x => x[ind].Player)</td>
+        <td>@Html.EditorFor(x => x[ind].Rating)</td>
+        <td>@Html.EditorFor(x => x[ind].RatingIncrement)</td>
+    </tr>
+}
