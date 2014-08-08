@@ -1,0 +1,141 @@
+﻿@{
+    Script.Require("jQuery").AtHead();
+    Script.Require("jQueryUI").AtHead();
+
+    Script.Include("knockout-3.1.0.js");
+}
+
+<style>
+    #ratingTable {
+        color: black;
+    }
+
+     #ratingTable tr td {
+         border-bottom: 1px solid #ddd;
+     }
+
+    .number, .place, .name, .rating {
+        padding: 7px 0;
+    }
+
+    .number {
+        width: 40px;
+    }
+
+    .place {
+        width: 40px;
+    }
+
+    .name {
+        width: 150px;
+    }
+
+    .rating {
+        width: 80px;
+    }
+
+    .isInArchive, .isInArchive a {
+        color: gray;
+    }
+
+    sup {
+        position: relative;
+        top: -0.5em;
+        font-size: 0.75em;
+        line-height: 0;
+        vertical-align: baseline;
+        text-transform: uppercase;
+    }
+</style>
+
+<h2>@T("Rating Table")</h2>
+
+<table id="ratingTable">
+    <thead>
+        <tr>
+            <th>Place</th>
+            <th>Name</th>
+            <th>Rating</th>
+        </tr>
+    </thead>
+    <tbody data-bind="foreach: ratingRecords">
+        <tr data-bind="css: { isInArchive: isInArchive }">
+            <td class="place" data-bind="text: place"></td>
+            <td class="name">
+                <a href="javascript:void(0)">
+                    <!--ko text: name--><!--/ko-->
+                </a>
+                <sup data-bind="visible: isInArchive">Arhived</sup>
+            </td>
+            <td class="rating" data-bind="text: rating"></td>
+        </tr>
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    //<![CDATA[
+    $(function() {
+
+        function RatingTableDataService(settings) {
+
+            var getRatingRecords = function() {
+                var url = '@HttpUtility.JavaScriptStringEncode(Url.Action("GetRatingRecords", "Tournament", new { area = "Custom.Tournament" }))/';
+
+                return $.Deferred(function(def) {
+                    $.ajax({
+                        type: "GET",
+                        url: url,
+                        cache: false,
+                        success: function(results) { def.resolve(results); },
+                        error: function(response) {
+                            def.reject(response);
+                        }
+                    });
+                });
+            };
+
+            return {
+                getRatingRecords: getRatingRecords
+            };
+        }
+
+        function RatingTableViewModel() {
+            var self = this;
+
+            self.ds = new RatingTableDataService();
+            self.ratingRecords = ko.observableArray([]);
+
+            self.loadRatingRecords = function() {
+                $.when(self.ds.getRatingRecords())
+                    .done(function(data) {
+                        var ind = 0;
+                        var place = 0;
+                        self.ratingRecords(ko.utils.arrayMap(data.ratingRecords, function (item) {
+                            var ratingRecord = {
+                                number: ++ind,
+                                id: item.Id,
+                                place: item.IsInArchive ? place + 1 : ++place,
+                                name: item.Name,
+                                rating: item.Rating,
+                                isInArchive: item.IsInArchive
+                            };
+                            return ratingRecord;
+                        }));
+                    })
+                    .fail(function(data) {
+                    });
+            };
+
+            return {
+                ratingRecords: self.ratingRecords,
+                loadRatingRecords: self.loadRatingRecords
+            };
+        }
+
+        var ratingTableViewModel = new RatingTableViewModel();
+        ko.applyBindings(ratingTableViewModel, document.getElementById('ratingTable'));
+        ratingTableViewModel.loadRatingRecords();
+
+    });
+    //]]>
+</script>

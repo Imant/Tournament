@@ -185,5 +185,24 @@ namespace Custom.Tournament
 
             return 10;
         }
+
+        public int UpdateFrom10()
+        {
+            ContentDefinitionManager.AlterPartDefinition(typeof(RatingTablePart).Name,
+                                                         builder => builder.Attachable());
+
+            return 11;
+        }
+
+        public int UpdateFrom11()
+        {
+            ContentDefinitionManager.AlterTypeDefinition("RatingTable",
+                                                         cfg => cfg
+                                                                    .WithPart(typeof(RatingTablePart).Name)
+                                                                    .Creatable()
+                );
+
+            return 12;
+        }
     }
 }

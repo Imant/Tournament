@@ -1,0 +1,16 @@
+﻿<Placement>
+  <Place Parts_RatingTable="Content:5"/>
+  <!--<Place Parts_GatewayWalletSettingsFrontEnd="Content:5"/>
+  <Place Parts_Deposit="Content:1"/>
+  <Place Parts_Withdraw="Content:1"/>
+  <Match ContentType="Widget">
+    <Place Parts_AmountInfo="Content:1"/>
+  </Match>
+  <Match DisplayType="SummaryAdmin">
+    <Place Parts_AmountInfo="-"/>
+  </Match>
+  <Match DisplayType="Detail">
+    <Place Parts_Common_Metadata="-"/>
+  </Match>-->
+  
+</Placement>

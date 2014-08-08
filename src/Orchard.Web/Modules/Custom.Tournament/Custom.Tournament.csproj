@@ -82,6 +82,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Scripts\knockout-3.1.0.js" />
     <Content Include="Styles\paged-list.css" />
     <Content Include="Web.config" />
     <Content Include="Views\Web.config" />
@@ -102,6 +103,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\TournamentAdminController.cs" />
+    <Compile Include="Controllers\TournamentController.cs" />
+    <Compile Include="Drivers\RatingTablePartDriver.cs" />
     <Compile Include="Helpers\CacheHelper.cs" />
     <Compile Include="Helpers\DataHelper.cs" />
     <Compile Include="Helpers\GlobalConstants.cs" />
@@ -116,6 +119,7 @@
     <Compile Include="Models\PlayerInGroupRecord.cs" />
     <Compile Include="Models\PlayerRecord.cs" />
     <Compile Include="Models\RatingRecord.cs" />
+    <Compile Include="Models\RatingTablePart.cs" />
     <Compile Include="Models\TourRecord.cs" />
     <Compile Include="ResourceManifest.cs" />
     <Compile Include="Services\TournamentDataService.cs" />
@@ -153,6 +157,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\TournamentAdmin\EditGroup.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Parts.RatingTable.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Placement.info" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

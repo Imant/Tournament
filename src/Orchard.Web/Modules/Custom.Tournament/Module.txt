@@ -1,5 +1,5 @@
 ﻿Name: Custom.Tournament
-AntiForgery: enabled
+AntiForgery: disabled
 Author: The Orchard Team
 Website: http://orchardproject.net
 Version: 1.0

@@ -16,7 +16,7 @@
     <ExtensionId>Custom.Tournament</ExtensionId>
     <LoaderName>DynamicExtensionLoader</LoaderName>
     <VirtualPath>~/Modules/Custom.Tournament/Custom.Tournament.csproj</VirtualPath>
-    <Hash>64839e91a6e61d0e</Hash>
+    <Hash>3ef9504f9f4da4a5</Hash>
   </Dependency>
   <Dependency>
     <ExtensionId>itWORKS.ExtendedRegistration</ExtensionId>
